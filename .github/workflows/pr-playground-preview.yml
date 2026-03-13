@@ -22,10 +22,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
       - name: Create or update playground preview comment
         uses: actions/github-script@v7
         with:
           script: |
+            const fs = require('node:fs');
             const marker = '<!-- facturascripts-playground-preview -->';
             const imageUrl = 'https://raw.githubusercontent.com/erseco/facturascripts-playground/main/ogimage.png';
             const { owner, repo } = context.repo;
@@ -48,14 +52,18 @@ jobs:
             const headRepo = pullRequest.head.repo.name;
             const headRef = pullRequest.head.ref;
             const pluginZipUrl = `https://github.com/${headOwner}/${headRepo}/archive/refs/heads/${headRef}.zip`;
-            const blueprint = {
-              meta: {
-                title: 'QuickCreate',
-                author: headOwner,
-                description: `Run QuickCreate from PR branch ${headRef} in FacturaScripts Playground`,
-              },
-              plugins: [pluginZipUrl],
-            };
+            const blueprintPath = 'blueprint.json';
+            const blueprint = JSON.parse(fs.readFileSync(blueprintPath, 'utf8'));
+
+            if (!Array.isArray(blueprint.plugins) || blueprint.plugins.length === 0) {
+              core.setFailed(`Expected at least one plugin entry in ${blueprintPath}.`);
+              return;
+            }
+
+            blueprint.plugins[0] = String(blueprint.plugins[0]).replace(
+              'https://github.com/erseco/facturascripts-plugin-QuickCreate/archive/refs/heads/main.zip',
+              pluginZipUrl
+            );
             const encodedBlueprint = toBase64Url(JSON.stringify(blueprint));
             const previewUrl = `https://erseco.github.io/facturascripts-playground/?blueprint-data=${encodedBlueprint}`;
             const body = [
