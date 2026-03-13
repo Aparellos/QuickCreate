@@ -1,9 +1,8 @@
 {
-  "$schema": "./assets/blueprints/blueprint-schema.json",
   "meta": {
     "title": "QuickCreate",
     "author": "erseco",
-    "description": "Run QuickCreate in FacturaScripts Playground with the plugin manager ready to enable and inspect the plugin."
+    "description": "Run QuickCreate in FacturaScripts Playground with the plugin manager ready to enable and inspect the plugin. Demo login: admin/admin."
   },
   "debug": {
     "enabled": true

@@ -60,10 +60,18 @@ jobs:
               return;
             }
 
-            blueprint.plugins[0] = String(blueprint.plugins[0]).replace(
-              'https://github.com/erseco/facturascripts-plugin-QuickCreate/archive/refs/heads/main.zip',
+            const originalPluginUrl = String(blueprint.plugins[0]);
+            const updatedPluginUrl = originalPluginUrl.replace(
+              /https:\/\/github\.com\/[^/]+\/[^/]+\/archive\/refs\/heads\/.+\.zip$/,
               pluginZipUrl
             );
+
+            if (updatedPluginUrl === originalPluginUrl) {
+              core.setFailed(`Could not replace plugin ZIP URL from ${blueprintPath}.`);
+              return;
+            }
+
+            blueprint.plugins[0] = updatedPluginUrl;
             const encodedBlueprint = toBase64Url(JSON.stringify(blueprint));
             const previewUrl = `https://erseco.github.io/facturascripts-playground/?blueprint-data=${encodedBlueprint}`;
             const body = [
