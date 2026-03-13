@@ -1,0 +1,10 @@
+{
+  "meta": {
+    "title": "QuickCreate",
+    "author": "erseco",
+    "description": "Run QuickCreate in FacturaScripts Playground"
+  },
+  "plugins": [
+    "https://github.com/erseco/facturascripts-plugin-QuickCreate/archive/refs/heads/main.zip"
+  ]
+}
